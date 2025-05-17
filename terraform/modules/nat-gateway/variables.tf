@@ -9,8 +9,8 @@ variable "public_subnet_id" {
 }
 
 variable "private_subnet_ids" {
-  description = "List of private subnet IDs to associate with private route table"
-  type        = list(string)
+  description = "map of private subnet IDs to associate with private route table"
+  type        = map(string)
 }
 
 variable "name_prefix" {

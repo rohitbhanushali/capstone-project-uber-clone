@@ -7,7 +7,7 @@ resource "aws_instance" "this" {
 
   vpc_security_group_ids = [var.security_group_id]
 
-  user_data = var.user_data != "" ? file(var.user_data) : null
+  user_data = var.user_data != null && var.user_data != "" ? file(var.user_data) : null
 
   tags = {
     Name = "${var.name_prefix}-${var.instance_role}-${count.index + 1}"

@@ -30,7 +30,7 @@ resource "aws_route_table" "private" {
 }
 
 resource "aws_route_table_association" "private" {
-  for_each = toset(var.private_subnet_ids)
+  for_each = var.private_subnet_ids
 
   subnet_id      = each.value
   route_table_id = aws_route_table.private.id
