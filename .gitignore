@@ -1,0 +1,42 @@
+# Local .terraform directories
+**/.terraform/*
+!.terraform/*.tfstate.backup
+
+# Terraform state files
+*.tfstate
+*.tfstate.backup
+
+# Crash logs
+crash.log
+
+# CLI configuration files
+.terraformrc
+terraform.rc
+
+# Terraform plan files
+*.tfplan
+
+# Sensitive variable files
+terraform.tfvars
+*.tfvars
+
+# IDE/editor junk
+*.swp
+*.bak
+*.tmp
+*.log
+*.DS_Store
+.vscode/
+.idea/
+
+# Shell history
+*.history
+
+# Python virtual environments (if using scripts)
+.venv/
+venv/
+
+# OS-specific
+Thumbs.db
+ehthumbs.db
+.DS_Store
