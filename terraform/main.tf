@@ -80,6 +80,7 @@ module "app_server" {
   user_data         = "./scripts/app-userdata.sh"
   name_prefix       = "demo"
   instance_role     = "app"
+  
 }
 
 #----------------------------------------------------------------------------
@@ -102,6 +103,82 @@ module "s3_iam" {
   name_prefix        = "demo"
   bucket_name_prefix = "demo-app"
   versioning_enabled = true
+}
+
+
+#----------------------------------------------------------------------------
+# ecr.tf
+module "ecr" {
+  source = "./modules/ecr"
+}
+
+
+#----------------------------------------------------------------------------
+resource "null_resource" "ansible_deploy" {
+  depends_on = [aws_instance.app_server] # Adjust to match your instance resource
+
+  provisioner "local-exec" {
+    command = <<EOT
+      ANSIBLE_HOST_KEY_CHECKING=False \
+      ansible-playbook -i ansible/inventory.ini ansible/playbook.yml
+    EOT
+  }
+}
+
+#----------------------------------------------------------------------------
+module "iam_ecr_access" {
+  source      = "./modules/iam-ecr-access"
+  name_prefix = "app-server"
+}
+
+
+#-----------------------------------------------------------------------------
+module "alb" {
+  source = "./modules/alb"
+
+  name                = "uber-alb"
+  vpc_id              = module.vpc.vpc_id
+  subnet_ids          = module.vpc.public_subnet_ids
+  security_group_id   = aws_security_group.alb_sg.id
+  target_instance_ids = module.ec2.instance_ids
+
+  tags = {
+    Environment = var.environment
+    Project     = var.project
+  }
+}
+
+resource "aws_security_group" "alb_sg" {
+  name        = "alb-sg"
+  description = "Allow HTTP traffic to ALB"
+  vpc_id      = module.vpc.vpc_id
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "alb-sg"
+  }
+}
+
+resource "aws_security_group_rule" "allow_alb_to_ec2" {
+  type                     = "ingress"
+  from_port               = 80
+  to_port                 = 80
+  protocol                = "tcp"
+  security_group_id       = module.ec2.instance_sg_id
+  source_security_group_id = aws_security_group.alb_sg.id
 }
 
 

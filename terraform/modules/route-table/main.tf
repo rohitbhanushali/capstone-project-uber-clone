@@ -17,3 +17,25 @@ resource "aws_route_table_association" "public" {
   subnet_id      = each.value
   route_table_id = aws_route_table.public.id
 }
+
+#-------------------------------------------------------------------------
+# Route table for private subnets
+resource "aws_route_table" "private" {
+  vpc_id = var.vpc_id
+
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.this.id
+  }
+
+  tags = {
+    Name = "${var.name_prefix}-private-rt"
+  }
+}
+
+resource "aws_route_table_association" "private" {
+  for_each = var.private_subnet_ids
+
+  subnet_id      = each.value
+  route_table_id = aws_route_table.private.id
+}

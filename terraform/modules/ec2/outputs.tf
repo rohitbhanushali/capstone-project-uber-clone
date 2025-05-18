@@ -1,6 +1,11 @@
 output "instance_ids" {
-  value       = aws_instance.this[*].id
-  description = "IDs of EC2 instances"
+  description = "List of EC2 instance IDs"
+  value       = [for instance in aws_instance.this : instance.id]
+}
+
+output "instance_sg_id" {
+  description = "Security Group ID attached to the EC2 instances"
+  value       = aws_security_group.this.id
 }
 
 output "public_ips" {

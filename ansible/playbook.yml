@@ -1,0 +1,37 @@
+- name: Deploy Uber Clone from ECR
+  hosts: app
+  become: yes
+
+  vars:
+    aws_region: ap-south-1
+    ecr_repo: "<aws_account_id>.dkr.ecr.ap-south-1.amazonaws.com/uber-clone"
+
+  tasks:
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+        update_cache: yes
+
+    - name: Ensure Docker is started
+      systemd:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Login to Amazon ECR
+      shell: |
+        eval $(aws ecr get-login --no-include-email --region {{ aws_region }})
+      environment:
+        AWS_REGION: "{{ aws_region }}"
+
+    - name: Pull Docker image
+      shell: docker pull {{ ecr_repo }}:latest
+
+    - name: Stop and remove old container (if exists)
+      shell: |
+        docker rm -f uber-clone || true
+
+    - name: Run new container
+      shell: |
+        docker run -d -p 3000:3000 --name uber-clone {{ ecr_repo }}:latest
