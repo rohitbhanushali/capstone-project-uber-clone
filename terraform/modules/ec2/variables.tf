@@ -6,7 +6,7 @@ variable "ami_id" {
 variable "instance_type" {
   description = "Instance type"
   type        = string
-  default     = "t3.micro"
+  default     = "t2.micro"
 }
 
 variable "instance_count" {
@@ -43,5 +43,16 @@ variable "name_prefix" {
 
 variable "instance_role" {
   description = "Role tag to indicate instance purpose (e.g. bastion, app)"
+  type        = string
+}
+
+variable "iam_instance_profile_name" {
+  description = "IAM instance profile name to attach to the EC2 instance"
+  type        = string
+  default     = ""
+}
+
+variable "vpc_id" {
+  description = "VPC ID where security group will be created"
   type        = string
 }

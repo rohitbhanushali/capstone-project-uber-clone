@@ -9,12 +9,7 @@ variable "internet_gateway_id" {
 }
 
 variable "public_subnet_ids" {
-  description = "List of public subnet IDs to associate with the public route table"
-  type        = map(string)
-}
-
-variable "private_subnet_ids" {
-  description = "List of private subnet IDs to associate with the private route table"
+  description = "Map of public subnet IDs to associate with the public route table"
   type        = map(string)
 }
 
