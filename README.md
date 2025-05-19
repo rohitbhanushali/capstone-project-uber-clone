@@ -19,6 +19,9 @@ Modern applications demand highly available, secure, and scalable infrastructure
 
 ## 🛠️ Features & Architecture
 
+![image](https://github.com/user-attachments/assets/f07bad49-a077-487c-a510-1843a5307691)
+
+
 - 🔒 **Secure VPC** with public and private subnets across multiple AZs
 - 🌐 **Internet Gateway & NAT Gateway** for controlled internet access
 - 🔐 **Security Groups** for tight network control
