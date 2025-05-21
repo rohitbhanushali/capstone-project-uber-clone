@@ -55,12 +55,6 @@ variable "environment" {
   default     = "dev"
 }
 
-variable "db_password" {
-  description = "Master DB password"
-  type        = string
-  sensitive   = true
-}
-
 variable "create_read_replica" {
   description = "Whether to create a read replica"
   type        = bool

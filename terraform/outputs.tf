@@ -55,8 +55,8 @@ output "ssh_to_bastion" {
 
 output "ssh_to_app_via_bastion" {
   description = "Commands to SSH to app servers through the bastion"
-  value       = [
-    for ip in module.app_server.private_ips : 
+  value = [
+    for ip in module.app_server.private_ips :
     "ssh -i ~/.ssh/${var.key_name}.pem -J ubuntu@${module.bastion.public_ips[0]} ubuntu@${ip}"
   ]
 }

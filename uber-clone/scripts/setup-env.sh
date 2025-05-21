@@ -20,7 +20,7 @@ fi
 
 # Get RDS endpoint from Terraform output
 echo -e "${YELLOW}Getting RDS endpoint from Terraform...${NC}"
-RDS_ENDPOINT=$(cd ../terraform && terraform output -raw rds_endpoint)
+RDS_ENDPOINT=$(cd ../../terraform && terraform output -raw rds_endpoint)
 if [ -z "$RDS_ENDPOINT" ]; then
     echo -e "${RED}Failed to get RDS endpoint. Make sure Terraform is initialized and applied.${NC}"
     exit 1
@@ -28,7 +28,7 @@ fi
 
 # Get ALB DNS name from Terraform output
 echo -e "${YELLOW}Getting ALB DNS name...${NC}"
-APP_URL=$(cd ../terraform && terraform output -raw app_url)
+APP_URL=$(cd ../../terraform && terraform output -raw app_url)
 API_URL="${APP_URL}/api"
 
 # Generate secure secrets
@@ -62,7 +62,7 @@ echo
 
 # Create .env file
 echo -e "${YELLOW}Creating .env file...${NC}"
-cat > .env << EOL
+cat > ../config/.env << EOL
 # Environment
 NODE_ENV=development
 

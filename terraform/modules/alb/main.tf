@@ -39,9 +39,9 @@ resource "aws_lb_listener" "this" {
 }
 
 resource "aws_lb_target_group_attachment" "this" {
-  for_each = toset(var.target_instance_ids)
+  count = length(var.target_instance_ids)
 
   target_group_arn = aws_lb_target_group.this.arn
-  target_id        = each.value
+  target_id        = var.target_instance_ids[count.index]
   port             = 80
 }

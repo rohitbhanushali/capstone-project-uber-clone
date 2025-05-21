@@ -20,7 +20,6 @@ module "subnet" {
     "a" = "10.0.101.0/24"
     "b" = "10.0.102.0/24"
     "c" = "10.0.103.0/24"
-    "d" = "10.0.104.0/24"
   }
 }
 
@@ -102,62 +101,62 @@ resource "aws_security_group" "alb_sg" {
 #----------------------------------------------------------------------------
 # Bastion Host
 module "bastion" {
-  source                   = "./modules/ec2"
-  ami_id                   = "ami-0e35ddab05955cf57"
-  instance_type            = "t2.micro"
-  instance_count           = 1
-  subnet_ids               = values(module.subnet.public_subnet_ids)
-  security_group_id        = module.security_group.public_sg_id
-  key_name                 = var.key_name
-  user_data                = "./scripts/bastion-userdata.sh"
-  name_prefix              = "${var.project}-${var.environment}"
-  instance_role            = "bastion"
+  source                    = "./modules/ec2"
+  ami_id                    = "ami-0e35ddab05955cf57"
+  instance_type             = "t2.micro"
+  instance_count            = 1
+  subnet_ids                = values(module.subnet.public_subnet_ids)
+  security_group_id         = module.security_group.public_sg_id
+  key_name                  = var.key_name
+  user_data                 = "./scripts/bastion-userdata.sh"
+  name_prefix               = "${var.project}-${var.environment}"
+  instance_role             = "bastion"
   iam_instance_profile_name = module.iam_ecr_access.instance_profile_name
-  vpc_id                   = module.vpc.vpc_id
+  vpc_id                    = module.vpc.vpc_id
 }
 
 #----------------------------------------------------------------------------
 # Application Servers
 module "app_server" {
-  source                   = "./modules/ec2"
-  ami_id                   = "ami-0e35ddab05955cf57"
-  instance_type            = "t2.micro"
-  instance_count           = 2
-  subnet_ids               = values(module.subnet.private_subnet_ids)
-  security_group_id        = module.security_group.private_sg_id
-  key_name                 = var.key_name
-  user_data                = "./scripts/app-userdata.sh"
-  name_prefix              = "${var.project}-${var.environment}"
-  instance_role            = "app"
+  source                    = "./modules/ec2"
+  ami_id                    = "ami-0e35ddab05955cf57"
+  instance_type             = "t2.micro"
+  instance_count            = 2
+  subnet_ids                = values(module.subnet.private_subnet_ids)
+  security_group_id         = module.security_group.private_sg_id
+  key_name                  = var.key_name
+  user_data                 = "./scripts/app-userdata.sh"
+  name_prefix               = "${var.project}-${var.environment}"
+  instance_role             = "app"
   iam_instance_profile_name = module.iam_ecr_access.instance_profile_name
-  vpc_id                   = module.vpc.vpc_id
+  vpc_id                    = module.vpc.vpc_id
 }
 
 #----------------------------------------------------------------------------
 # RDS Database
 module "rds" {
-  source            = "./modules/rds"
-  name_prefix       = "${var.project}-${var.environment}"
-  subnet_ids        = values(module.subnet.private_subnet_ids)
-  security_group_id = module.security_group.rds_sg_id
-  engine            = "postgres"
-  instance_class    = var.environment == "prod" ? "db.t3.medium" : "db.t3.micro"
-  allocated_storage = var.environment == "prod" ? 50 : 20
-  multi_az          = var.environment == "prod" ? true : false
-  db_username       = "admin123"
-  environment       = var.environment
-  create_read_replica = var.environment == "prod" ? true : false
+  source                 = "./modules/rds"
+  name_prefix            = "${var.project}-${var.environment}"
+  subnet_ids             = values(module.subnet.private_subnet_ids)
+  security_group_id      = module.security_group.rds_sg_id
+  engine                 = "postgres"
+  instance_class         = var.environment == "prod" ? "db.t3.medium" : "db.t3.micro"
+  allocated_storage      = var.environment == "prod" ? 50 : 20
+  multi_az               = var.environment == "prod" ? true : false
+  db_username            = "admin123"
+  environment            = var.environment
+  create_read_replica    = var.environment == "prod" ? true : false
   replica_instance_class = var.environment == "prod" ? "db.t3.medium" : "db.t3.micro"
 }
 
 #----------------------------------------------------------------------------
 # Application Load Balancer
 module "alb" {
-  source             = "./modules/alb"
-  name               = "${var.project}-${var.environment}-alb"
-  vpc_id             = module.vpc.vpc_id
-  subnet_ids         = values(module.subnet.public_subnet_ids)
-  security_group_id  = aws_security_group.alb_sg.id
+  source              = "./modules/alb"
+  name                = "${var.project}-${var.environment}-alb"
+  vpc_id              = module.vpc.vpc_id
+  subnet_ids          = values(module.subnet.public_subnet_ids)
+  security_group_id   = aws_security_group.alb_sg.id
   target_instance_ids = module.app_server.instance_ids
 
   tags = {

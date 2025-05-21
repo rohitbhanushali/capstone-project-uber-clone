@@ -23,6 +23,13 @@ resource "aws_db_subnet_group" "rds" {
   }
 }
 
+# Create a random string for unique naming
+resource "random_string" "unique" {
+  length  = 8
+  special = false
+  upper   = false
+}
+
 # Create a random password for the database
 resource "random_password" "db_password" {
   length           = 16
@@ -32,7 +39,7 @@ resource "random_password" "db_password" {
 
 # Store the password in AWS Secrets Manager
 resource "aws_secretsmanager_secret" "db_password" {
-  name = "${var.name_prefix}-db-password"
+  name = "${var.name_prefix}-db-password-${random_string.unique.result}"
 }
 
 resource "aws_secretsmanager_secret_version" "db_password" {
@@ -42,7 +49,7 @@ resource "aws_secretsmanager_secret_version" "db_password" {
 
 # Create a parameter group for PostgreSQL
 resource "aws_db_parameter_group" "postgres" {
-  family = "postgres13"
+  family = "postgres17"  # Updated to match engine version
   name   = "${var.name_prefix}-postgres-params"
 
   parameter {
@@ -68,7 +75,7 @@ resource "aws_db_parameter_group" "postgres" {
 resource "aws_db_instance" "primary" {
   identifier              = "${var.name_prefix}-rds-primary"
   engine                  = var.engine
-  engine_version          = "13.7"
+  engine_version          = "17.4"
   instance_class          = var.instance_class
   allocated_storage       = var.allocated_storage
   storage_type            = var.storage_type
