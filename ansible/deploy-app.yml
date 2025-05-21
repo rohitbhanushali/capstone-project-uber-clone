@@ -1,0 +1,60 @@
+---
+- name: Deploy Uber Clone Application
+  hosts: app_servers
+  become: yes
+  vars:
+    app_dir: /opt/uber-clone
+    docker_compose_version: "2.20.2"
+    
+  tasks:
+    - name: Install required packages
+      apt:
+        name:
+          - docker.io
+          - docker-compose
+          - nginx
+        state: present
+        update_cache: yes
+
+    - name: Start and enable Docker service
+      systemd:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Create application directory
+      file:
+        path: "{{ app_dir }}"
+        state: directory
+        mode: '0755'
+
+    - name: Copy application files
+      copy:
+        src: "{{ playbook_dir }}/../uber-clone"
+        dest: "{{ app_dir }}"
+        mode: '0755'
+
+    - name: Build and start Docker container
+      shell: |
+        cd {{ app_dir }}
+        docker build -t uber-clone .
+        docker run -d -p 3000:3000 --name uber-clone-app uber-clone
+      args:
+        creates: "{{ app_dir }}/.docker-complete"
+
+    - name: Configure Nginx
+      template:
+        src: nginx.conf.j2
+        dest: /etc/nginx/sites-available/uber-clone
+        mode: '0644'
+
+    - name: Enable Nginx site
+      file:
+        src: /etc/nginx/sites-available/uber-clone
+        dest: /etc/nginx/sites-enabled/uber-clone
+        state: link
+
+    - name: Restart Nginx
+      systemd:
+        name: nginx
+        state: restarted 

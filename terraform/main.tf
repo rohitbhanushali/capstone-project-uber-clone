@@ -141,11 +141,13 @@ module "rds" {
   subnet_ids        = values(module.subnet.private_subnet_ids)
   security_group_id = module.security_group.rds_sg_id
   engine            = "postgres"
-  instance_class    = "db.t3.micro"
-  allocated_storage = 20
-  multi_az          = true  # Enable Multi-AZ for production
+  instance_class    = var.environment == "prod" ? "db.t3.medium" : "db.t3.micro"
+  allocated_storage = var.environment == "prod" ? 50 : 20
+  multi_az          = var.environment == "prod" ? true : false
   db_username       = "admin123"
-  db_password       = "Password123!" # Use AWS Secrets Manager in production
+  environment       = var.environment
+  create_read_replica = var.environment == "prod" ? true : false
+  replica_instance_class = var.environment == "prod" ? "db.t3.medium" : "db.t3.micro"
 }
 
 #----------------------------------------------------------------------------

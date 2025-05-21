@@ -1,17 +1,67 @@
+---
 - name: Deploy Uber Clone from ECR
   hosts: app
   become: yes
 
   vars:
     aws_region: ap-south-1
-    ecr_repo: "<aws_account_id>.dkr.ecr.ap-south-1.amazonaws.com/uber-clone"
+    ecr_repo: "{{ aws_account_id }}.dkr.ecr.{{ aws_region }}.amazonaws.com/uber-clone"
+    app_port: 3000
+    health_check_path: "/api/health"
+    health_check_timeout: 60
+    max_retries: 3
+    retry_delay: 5
+
+  pre_tasks:
+    - name: Verify required variables
+      fail:
+        msg: "{{ item }} is not defined"
+      when: item is not defined
+      loop:
+        - aws_account_id
+        - aws_access_key
+        - aws_secret_key
+        - db_host
+        - db_port
+        - db_name
+        - db_user
+        - db_password
+        - environment
 
   tasks:
-    - name: Install Docker
+    - name: Install required packages
       apt:
-        name: docker.io
+        name:
+          - docker.io
+          - python3-pip
+          - awscli
+          - jq
         state: present
         update_cache: yes
+      register: apt_result
+      retries: 3
+      delay: 5
+      until: apt_result is success
+
+    - name: Install AWS CLI
+      pip:
+        name: awscli
+        state: present
+      register: pip_result
+      retries: 3
+      delay: 5
+      until: pip_result is success
+
+    - name: Configure AWS credentials
+      copy:
+        content: |
+          [default]
+          aws_access_key_id={{ aws_access_key }}
+          aws_secret_access_key={{ aws_secret_key }}
+          region={{ aws_region }}
+        dest: ~/.aws/credentials
+        mode: '0600'
+      no_log: true
 
     - name: Ensure Docker is started
       systemd:
@@ -21,17 +71,95 @@
 
     - name: Login to Amazon ECR
       shell: |
-        eval $(aws ecr get-login --no-include-email --region {{ aws_region }})
-      environment:
-        AWS_REGION: "{{ aws_region }}"
+        aws ecr get-login-password --region {{ aws_region }} | docker login --username AWS --password-stdin {{ aws_account_id }}.dkr.ecr.{{ aws_region }}.amazonaws.com
+      register: ecr_login
+      changed_when: false
+      retries: 3
+      delay: 5
+      until: ecr_login is success
 
     - name: Pull Docker image
-      shell: docker pull {{ ecr_repo }}:latest
+      docker_image:
+        name: "{{ ecr_repo }}:latest"
+        source: pull
+        force_source: yes
+      register: pull_result
+      retries: 3
+      delay: 5
+      until: pull_result is success
 
-    - name: Stop and remove old container (if exists)
-      shell: |
-        docker rm -f uber-clone || true
+    - name: Stop and remove old container
+      docker_container:
+        name: uber-clone
+        state: absent
+      ignore_errors: yes
+      register: stop_result
 
     - name: Run new container
-      shell: |
-        docker run -d -p 3000:3000 --name uber-clone {{ ecr_repo }}:latest
+      docker_container:
+        name: uber-clone
+        image: "{{ ecr_repo }}:latest"
+        state: started
+        ports:
+          - "{{ app_port }}:{{ app_port }}"
+        env:
+          DB_HOST: "{{ db_host }}"
+          DB_PORT: "{{ db_port }}"
+          DB_NAME: "{{ db_name }}"
+          DB_USER: "{{ db_user }}"
+          DB_PASSWORD: "{{ db_password }}"
+          NODE_ENV: "{{ environment }}"
+          ENABLE_METRICS: "true"
+          METRICS_PORT: "9090"
+        restart_policy: always
+        healthcheck:
+          test: ["CMD", "curl", "-f", "http://localhost:{{ app_port }}{{ health_check_path }}"]
+          interval: 30s
+          timeout: 10s
+          retries: 3
+          start_period: 40s
+      register: container_result
+      no_log: true
+
+    - name: Wait for application to start
+      uri:
+        url: "http://localhost:{{ app_port }}{{ health_check_path }}"
+        method: GET
+        status_code: 200
+        timeout: "{{ health_check_timeout }}"
+      register: health_check
+      until: health_check.status == 200
+      retries: "{{ max_retries }}"
+      delay: "{{ retry_delay }}"
+      ignore_errors: yes
+
+    - name: Verify deployment
+      debug:
+        msg: "Deployment completed successfully"
+      when: health_check.status == 200
+
+    - name: Rollback on failure
+      block:
+        - name: Stop new container
+          docker_container:
+            name: uber-clone
+            state: absent
+          when: health_check.status != 200
+
+        - name: Start old container if it existed
+          docker_container:
+            name: uber-clone
+            image: "{{ ecr_repo }}:previous"
+            state: started
+            ports:
+              - "{{ app_port }}:{{ app_port }}"
+            env:
+              DB_HOST: "{{ db_host }}"
+              DB_PORT: "{{ db_port }}"
+              DB_NAME: "{{ db_name }}"
+              DB_USER: "{{ db_user }}"
+              DB_PASSWORD: "{{ db_password }}"
+              NODE_ENV: "{{ environment }}"
+            restart_policy: always
+          when: stop_result is success
+      when: health_check.status != 200

@@ -80,3 +80,14 @@ resource "aws_security_group" "rds_sg" {
     Name = "${var.name_prefix}-sg-rds"
   }
 }
+
+# Additional security group rule for RDS
+resource "aws_security_group_rule" "allow_rds_from_app" {
+  type                     = "ingress"
+  from_port                = var.rds_port
+  to_port                  = var.rds_port
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.rds_sg.id
+  source_security_group_id = aws_security_group.private_sg.id
+  description             = "Allow PostgreSQL access from app servers"
+}

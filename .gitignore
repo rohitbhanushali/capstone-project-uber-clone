@@ -1,42 +1,238 @@
-# Local .terraform directories
+# Dependencies
+node_modules/
+/.pnp
+.pnp.js
+package-lock.json
+yarn.lock
+.npm
+.yarn
+.yarnrc
+.pnp.*
+.npmrc
+
+# Testing
+/coverage
+.nyc_output
+/cypress/videos/
+/cypress/screenshots/
+/jest-coverage/
+/test-results/
+/playwright-report/
+/playwright/.cache/
+
+# Next.js
+/.next/
+/out/
+.next/
+*.tsbuildinfo
+
+# Production
+/build
+/dist
+/storybook-static/
+/.storybook/
+
+# Environment Variables
+.env
+.env.*
+!.env.example
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env*.local
+
+# Terraform
 **/.terraform/*
-!.terraform/*.tfstate.backup
-
-# Terraform state files
 *.tfstate
-*.tfstate.backup
-
-# Crash logs
+*.tfstate.*
 crash.log
-
-# CLI configuration files
+crash.*.log
+*.tfvars
+*.tfvars.json
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
 .terraformrc
 terraform.rc
+.terraform.lock.hcl
+.terraform.tfstate.lock.info
 
-# Terraform plan files
-*.tfplan
+# Ansible
+*.retry
+ansible.cfg
+inventory.ini
+host_vars/
+group_vars/
+ansible-vault
+.vault_pass
 
-# Sensitive variable files
-terraform.tfvars
-*.tfvars
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+.history/
 
-# IDE/editor junk
+# IDE - JetBrains
+.idea/
+*.iml
+*.iws
+*.ipr
+.idea_modules/
+
+# IDE - Eclipse
+.project
+.classpath
+.settings/
+.factorypath
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+firebase-debug.log*
+ui-debug.log*
+
+# Debug
+.debug/
+.debug.log
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.python-version
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Docker
+.docker/
+docker-compose.override.yml
+docker-compose.*.yml
+!docker-compose.yml
+.dockerignore
+
+# AWS
+.aws/
+aws.json
+aws-credentials.json
+.aws-sam/
+samconfig.toml
+
+# Firebase
+.firebase/
+firebase-debug.log
+firebase-debug.*.log
+ui-debug.log
+.firebaserc
+firebase-debug.*.log*
+
+# Mapbox
+.mapbox/
+mapbox-tokens.json
+mapbox-credentials.json
+
+# Security
+*.pem
+*.key
+*.cert
+*.crt
+*.p12
+*.pfx
+*.keystore
+*.jks
+*.p8
+*.pem
+*.key
+*.cert
+*.crt
+*.p12
+*.pfx
+*.keystore
+*.jks
+*.p8
+*.env
+*.secret
+*.token
+*.credential
+*.password
+*.auth
+*.key
+*.cert
+*.crt
+*.p12
+*.pfx
+*.keystore
+*.jks
+*.p8
+
+# Misc
 *.swp
+*.swo
 *.bak
 *.tmp
-*.log
-*.DS_Store
-.vscode/
-.idea/
-
-# Shell history
-*.history
-
-# Python virtual environments (if using scripts)
-.venv/
-venv/
-
-# OS-specific
-Thumbs.db
-ehthumbs.db
-.DS_Store
+*.temp
+.cache/
+.temp/
+.tmp/
+temp/
+tmp/
+*.pid
+*.seed
+*.pid.lock
+.npm
+.eslintcache
+.stylelintcache
+.prettiercache
+.vercel
+.netlify
+.serverless/
+.fusebox/
+.dynamodb/
+.tern-port
+.vscode-test/
+.yarn-integrity

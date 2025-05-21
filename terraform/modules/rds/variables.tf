@@ -1,55 +1,74 @@
 variable "name_prefix" {
-  description = "Prefix for naming RDS resources"
+  description = "Prefix to be used for resource names"
   type        = string
 }
 
 variable "subnet_ids" {
-  description = "List of private subnet IDs for RDS"
+  description = "List of subnet IDs for RDS"
   type        = list(string)
 }
 
 variable "security_group_id" {
-  description = "RDS security group ID"
+  description = "Security group ID for RDS"
   type        = string
 }
 
 variable "engine" {
-  description = "RDS engine (e.g., postgres, mysql)"
+  description = "Database engine type"
   type        = string
   default     = "postgres"
 }
 
 variable "instance_class" {
-  description = "RDS instance type"
+  description = "RDS instance class"
   type        = string
   default     = "db.t3.micro"
 }
 
 variable "allocated_storage" {
-  description = "RDS allocated storage in GB"
+  description = "Allocated storage in GB"
   type        = number
   default     = 20
 }
 
 variable "storage_type" {
-  description = "Storage type (e.g., gp2, gp3)"
+  description = "Storage type for RDS"
   type        = string
-  default     = "gp3"
+  default     = "gp2"
 }
 
 variable "multi_az" {
-  description = "Enable multi-AZ deployment"
+  description = "Whether to create a multi-AZ deployment"
   type        = bool
   default     = false
 }
 
 variable "db_username" {
-  description = "Master DB username"
+  description = "Database master username"
   type        = string
+  default     = "postgres"
+}
+
+variable "environment" {
+  description = "Environment name (e.g., dev, prod)"
+  type        = string
+  default     = "dev"
 }
 
 variable "db_password" {
   description = "Master DB password"
   type        = string
   sensitive   = true
+}
+
+variable "create_read_replica" {
+  description = "Whether to create a read replica"
+  type        = bool
+  default     = false
+}
+
+variable "replica_instance_class" {
+  description = "Instance class for read replica"
+  type        = string
+  default     = "db.t3.micro"
 }

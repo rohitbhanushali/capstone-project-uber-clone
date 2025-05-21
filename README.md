@@ -1,4 +1,3 @@
-
 # 🚀 Terraform AWS Infrastructure for Uber Clone
 
 This project automates the provisioning of **highly available**, **secure**, and **scalable** AWS infrastructure using **Terraform**. It is designed to support a production-ready application like an Uber clone by incorporating modern cloud architecture principles such as fault tolerance, network segmentation, and infrastructure as code (IaC).
@@ -175,3 +174,256 @@ MIT License — feel free to use and modify as needed.
 ## 🙋‍♂️ Support
 
 If you're stuck, feel free to open an issue or reach out. Happy Terraforming! 🌍
+
+# 🚕 Uber Clone Project
+
+A full-stack Uber clone application built with Next.js, Firebase, Mapbox, and AWS services. This project demonstrates modern web development practices and cloud architecture.
+
+## 📋 Table of Contents
+
+- [Features](#-features)
+- [Prerequisites](#-prerequisites)
+- [Getting Started](#-getting-started)
+- [Environment Setup](#-environment-setup)
+- [Database Setup](#-database-setup)
+- [Running the Application](#-running-the-application)
+- [Testing](#-testing)
+- [Deployment](#-deployment)
+- [Project Structure](#-project-structure)
+- [Troubleshooting](#-troubleshooting)
+- [Contributing](#-contributing)
+- [License](#-license)
+
+## ✨ Features
+
+- 🔐 User authentication with Firebase
+- 🗺️ Real-time ride tracking with Mapbox
+- 💰 Dynamic fare calculation
+- 💳 Payment integration
+- 🚗 Driver matching system
+- 📱 Push notifications
+- 📧 Email notifications
+- 📤 Image upload to S3
+- ⚡ Rate limiting
+- 📚 API documentation
+- 🛡️ Error handling
+- ⏳ Loading states
+- ✅ Testing setup
+
+## 🛠️ Prerequisites
+
+Before you begin, ensure you have the following installed:
+
+- [Node.js](https://nodejs.org/) (v18 or higher)
+- [PostgreSQL](https://www.postgresql.org/download/) (v14 or higher)
+- [Git](https://git-scm.com/downloads)
+- [Docker](https://www.docker.com/products/docker-desktop) (optional)
+
+You'll also need accounts for:
+- [Firebase](https://firebase.google.com/)
+- [Mapbox](https://www.mapbox.com/)
+- [AWS](https://aws.amazon.com/) (optional for production)
+
+## 🚀 Getting Started
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd uber-clone
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+## ⚙️ Environment Setup
+
+1. **Create a `.env` file in the root directory**
+   ```env
+   # Database
+   DB_HOST=localhost
+   DB_PORT=5432
+   DB_NAME=uber_clone
+   DB_USER=postgres
+   DB_PASSWORD=your_postgres_password
+
+   # Firebase
+   NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
+   NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_auth_domain
+   NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+   NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_storage_bucket
+   NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+   NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+
+   # Mapbox
+   NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN=your_mapbox_token
+
+   # Application
+   NEXT_PUBLIC_APP_URL=http://localhost:3000
+   NEXT_PUBLIC_API_URL=http://localhost:3000/api
+   ```
+
+2. **Get API Keys**
+   - [Firebase Setup Guide](docs/firebase-setup.md)
+   - [Mapbox Setup Guide](docs/mapbox-setup.md)
+   - [AWS Setup Guide](docs/aws-setup.md)
+
+## 💾 Database Setup
+
+1. **Create the database**
+   ```bash
+   # Open PostgreSQL command prompt
+   psql -U postgres
+
+   # Create database
+   CREATE DATABASE uber_clone;
+   
+   # Exit PostgreSQL
+   \q
+   ```
+
+2. **Run migrations**
+   ```bash
+   npm run db:migrate
+   ```
+
+3. **Seed the database**
+   ```bash
+   npm run db:seed
+   ```
+
+## 🏃‍♂️ Running the Application
+
+### Development Mode
+```bash
+npm run dev
+```
+The application will be available at `http://localhost:3000`
+
+### Production Build
+```bash
+# Build the application
+npm run build
+
+# Start production server
+npm start
+```
+
+### Docker Deployment
+```bash
+# Build Docker image
+docker build -t uber-clone .
+
+# Run container
+docker run -p 3000:3000 --env-file .env uber-clone
+```
+
+## 🧪 Testing
+
+```bash
+# Run all tests
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Generate test coverage
+npm run test:coverage
+```
+
+## 📁 Project Structure
+
+```
+uber-clone/
+├── components/         # React components
+├── pages/             # Next.js pages
+├── public/            # Static files
+├── styles/            # CSS styles
+├── utils/             # Utility functions
+├── config/            # Configuration files
+├── models/            # Database models
+├── scripts/           # Utility scripts
+├── tests/             # Test files
+├── ansible/           # Ansible deployment
+└── terraform/         # Infrastructure as Code
+```
+
+## 🔧 Troubleshooting
+
+### Common Issues
+
+1. **Database Connection Issues**
+   - Ensure PostgreSQL is running
+   - Verify database credentials in `.env`
+   - Check if database exists
+
+2. **Firebase Authentication Issues**
+   - Verify Firebase project setup
+   - Check Firebase credentials
+   - Ensure Firebase services are enabled
+
+3. **Mapbox Issues**
+   - Verify Mapbox token
+   - Check token permissions
+
+### Getting Help
+
+- Check the [issues](https://github.com/yourusername/uber-clone/issues) page
+- Review the [documentation](docs/)
+- Join our [Discord community](https://discord.gg/your-discord)
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+### Development Workflow
+
+1. **Create a new branch**
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+
+2. **Make your changes**
+
+3. **Run tests**
+   ```bash
+   npm test
+   ```
+
+4. **Run linting**
+   ```bash
+   npm run lint
+   ```
+
+5. **Commit your changes**
+   ```bash
+   git add .
+   git commit -m "Description of your changes"
+   ```
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- [Next.js](https://nextjs.org/)
+- [Firebase](https://firebase.google.com/)
+- [Mapbox](https://www.mapbox.com/)
+- [AWS](https://aws.amazon.com/)
+- [PostgreSQL](https://www.postgresql.org/)
+
+## 📞 Support
+
+- 📧 Email: your-email@example.com
+- 💬 Discord: [Join our community](https://discord.gg/your-discord)
+- 📝 Issues: [GitHub Issues](https://github.com/yourusername/uber-clone/issues)
+
+---
+
+Made with ❤️ by [Your Name]
