@@ -1,5 +1,17 @@
-const sequelize = require('../config/database');
-const Ride = require('../models/Ride');
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '../config/.env') });
+
+const { Sequelize } = require('sequelize');
+
+const sequelize = new Sequelize({
+  dialect: 'postgres',
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  username: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  logging: false
+});
 
 async function initializeDatabase() {
   try {

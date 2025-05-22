@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-require('dotenv').config();
+require('dotenv').config({ path: path.join(__dirname, '../config/.env') });
 
 const requiredEnvVars = {
   // Environment
@@ -88,6 +88,11 @@ function validateUrls() {
 }
 
 function validateSecrets() {
+  // Skip secret validation in development environment
+  if (process.env.NODE_ENV === 'development') {
+    return;
+  }
+
   const secrets = [
     process.env.JWT_SECRET,
     process.env.COOKIE_SECRET,

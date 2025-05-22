@@ -54,10 +54,20 @@ else
 fi
 
 # Step 2: Validate environment variables
-run_script "node validate-env.js" "Environment validation"
+echo -e "${YELLOW}Running Environment validation...${NC}"
+if ! node validate-env.js; then
+    echo -e "${RED}Error: Environment validation failed${NC}"
+    exit 1
+fi
+echo -e "${GREEN}Environment validation completed successfully${NC}\n"
 
 # Step 3: Initialize database
-run_script "node init-db.js" "Database initialization"
+echo -e "${YELLOW}Running Database initialization...${NC}"
+if ! node init-db.js; then
+    echo -e "${RED}Error: Database initialization failed${NC}"
+    exit 1
+fi
+echo -e "${GREEN}Database initialization completed successfully${NC}\n"
 
 # Step 4: Build and push Docker image
 run_script "./deploy.sh" "Docker image deployment"
