@@ -1,3 +1,22 @@
+locals {
+  common_tags = {
+    Environment = var.environment
+    Project     = var.project
+    ManagedBy   = "terraform"
+    Owner       = "DevOps Team"
+  }
+  
+  environment_tags = var.environment == "prod" ? {
+    Criticality = "High"
+    Backup      = "Daily"
+  } : {
+    Criticality = "Low"
+    Backup      = "Weekly"
+  }
+  
+  tags = merge(local.common_tags, local.environment_tags)
+}
+
 module "vpc" {
   source      = "./modules/vpc"
   vpc_cidr    = "10.0.0.0/16"
